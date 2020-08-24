@@ -28,6 +28,36 @@
   color: #61dafb;
 }
 
+.title {
+  margin: 20px;
+}
+
+.country {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  margin-top: 2px;
+  background-color: #c1c1c11a;
+}
+
+.country-key {
+  font-weight: bold;
+  margin-right: 40px;
+  text-align: left;
+  max-width: 25%;
+  width: 100%;
+}
+.country-value {
+  flex: 1 auto;
+}
+.country-value .country-value-item {
+  padding: 3px 8px;
+}
+
+result-country-item .nested-list {
+  text-align: left;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
