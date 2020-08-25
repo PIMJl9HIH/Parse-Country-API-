@@ -10,9 +10,10 @@ import StartPage from "./Components/StartPage";
 import ChosenRegion from "./Components/ChosenRegion";
 import ChosenCountry from "./Components/ChosenCountry";
 import Breadcrumbs from "./Components/Breadcrumb";
+import Loading from "./Components/Loading";
 
 function App() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
 
@@ -20,15 +21,23 @@ function App() {
 
   const [filteredResult, setFilteredResult] = useState([]);
 
+  const [sorting, setSorting] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
   async function handlerChooseRegion(e) {
     const region = e.target.innerText;
     setRegion(region);
+    setLoading(true);
     try {
       const response = await GET_REGION(region);
       setData(response.data);
       setBreadcrumbs((breadcumbs) => [...breadcumbs, region]);
     } catch (error) {
       console.error(error);
+    } finally {
+      console.log("finally");
+      setLoading(false);
     }
   }
 
@@ -40,12 +49,17 @@ function App() {
       case 1: {
         setRegion("");
         setCountry("");
+        setFilteredResult([]);
+        setData([]);
         break;
       }
       case 2: {
         setCountry("");
+        setFilteredResult([]);
         break;
       }
+      default:
+        return;
     }
 
     setBreadcrumbs(sliced);
@@ -54,16 +68,33 @@ function App() {
   function viewCountry(e) {
     const country = e.target.innerText;
     const result = data.filter((item) => item.name === country);
-
     setCountry(country);
-    setBreadcrumbs((breadcumbs) => [...breadcumbs, country]);
 
+    setBreadcrumbs((breadcumbs) => [...breadcumbs, country]);
     setFilteredResult(result);
+  }
+
+  function sortingCountry({ target: { name } }) {
+    const orderSort = (a, b) => {
+      if (sorting === name) {
+        console.log("the same ");
+        setSorting("");
+        return a[name] > b[name] ? 1 : -1;
+      } else {
+        console.log("different");
+        return a[name] > b[name] ? -1 : 1;
+      }
+    };
+    setSorting(name);
+    const sortedData = [...data].sort((a, b) => orderSort(a, b));
+    setData(sortedData);
   }
 
   const contextScheme = {
     handlerChooseRegion,
     viewCountry,
+    sortingCountry,
+    sorting,
   };
 
   const viewResults = () => {
@@ -100,9 +131,12 @@ function App() {
               <h1 className="title">{titleText}</h1>
             </Col>
           </Row>
-
           <Row>
-            <Col>{viewResults()}</Col>
+            <Col>
+              <div className="result-block">
+                {loading ? <Loading /> : viewResults()}
+              </div>
+            </Col>
           </Row>
         </Container>
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-import { ListGroup } from "react-bootstrap";
+import { ListGroup, Image } from "react-bootstrap";
 
 export default function ResultList({
   data,
@@ -33,9 +33,13 @@ export default function ResultList({
       values !== null;
 
     const parseVal = (values) => {
+      console.log("values", values);
+
+      if (!values) return "-";
       let val;
       if (isObjectArray(values)) {
         // val = values.join(",");
+
         val = (
           <ListGroup as="ul" horizontal>
             {values.map((item, i) => (
@@ -50,24 +54,16 @@ export default function ResultList({
           </ListGroup>
         );
       } else if (typeof values === "object" && values !== null) {
-        console.log("values", values);
+        // console.log("values", values);
 
         let result = "";
         if (Array.isArray(values)) {
+          // eslint-disable-next-line
           values.map((item) => {
-            console.log("zzz", item);
+            // console.log("zzz", item);
             if (typeof item === "object" && item !== null) {
               parseResult(item);
             }
-
-            // if (typeof item === "object" && item !== null) {
-            //   parseResult(item);
-            //   // console.log("7777777777777", item);
-            // } else {
-            //   // console.log("555555555555555555555");
-
-            //   result += ", " + item;
-            // }
           });
         } else {
           parseResult(values);
@@ -93,7 +89,12 @@ export default function ResultList({
         // simple way
         // val = JSON.stringify(values);
       } else {
-        val = values;
+        let parseImg = values.toString().includes("http") ? (
+          <Image src={values} />
+        ) : (
+          <span className="similar-list-item">{values}</span>
+        );
+        val = parseImg;
       }
       return val;
     };
