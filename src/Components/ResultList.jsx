@@ -3,6 +3,75 @@ import classNames from "classnames";
 
 import { ListGroup, Image } from "react-bootstrap";
 
+const checkToSimpleValue = (arr) =>
+  arr.every((item) => typeof item !== "object");
+
+const isObjectArraySimple = (values) =>
+  typeof values === "object" &&
+  Array.isArray(values) &&
+  checkToSimpleValue(values) &&
+  values !== null;
+
+const parseVal = (values) => {
+  if (!values) return "-";
+  let val;
+  if (isObjectArraySimple(values)) {
+    val = (
+      <ListGroup as="ul" horizontal>
+        {values.map((item, i) => (
+          <ListGroup.Item
+            as="li"
+            key={`${item}-${i}`}
+            style={{ padding: "3px 8px" }}
+          >
+            {item}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    );
+  } else if (typeof values === "object" && values !== null) {
+    let result = "";
+    if (Array.isArray(values)) {
+      // eslint-disable-next-line
+      values.map((item) => {
+        if (typeof item === "object" && item !== null) {
+          parseResult(item);
+        }
+      });
+    } else {
+      parseResult(values);
+    }
+
+    function parseResult(obj) {
+      for (let key in obj) {
+        let betterVisible =
+          isObjectArraySimple(obj[key]) && obj[key].length > 0
+            ? obj[key].join(", ")
+            : obj[key];
+        result += `<li class="list-group-item country-value-item" >${key} - ${betterVisible} </li>`;
+      }
+    }
+
+    val = (
+      <ul
+        className="nested-list list-group"
+        dangerouslySetInnerHTML={{ __html: result }}
+      />
+    );
+
+    // simple way
+    // val = JSON.stringify(values);
+  } else {
+    let parseImg = values.toString().includes("http") ? (
+      <Image src={values} />
+    ) : (
+      <span className="similar-list-item">{values}</span>
+    );
+    val = parseImg;
+  }
+  return val;
+};
+
 export default function ResultList({
   data,
   handlerChooseRegion,
@@ -21,84 +90,6 @@ export default function ResultList({
   const classes = classNames("text-left", { ...rest });
 
   const countryInfo = () => {
-    // console.log("gg", data[0]);
-
-    const checkToSimpleValue = (arr) =>
-      arr.every((item) => typeof item !== "object");
-
-    const isObjectArray = (values) =>
-      typeof values === "object" &&
-      Array.isArray(values) &&
-      checkToSimpleValue(values) &&
-      values !== null;
-
-    const parseVal = (values) => {
-      console.log("values", values);
-
-      if (!values) return "-";
-      let val;
-      if (isObjectArray(values)) {
-        // val = values.join(",");
-
-        val = (
-          <ListGroup as="ul" horizontal>
-            {values.map((item, i) => (
-              <ListGroup.Item
-                as="li"
-                key={`${item}-${i}`}
-                style={{ padding: "3px 8px" }}
-              >
-                {item}
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        );
-      } else if (typeof values === "object" && values !== null) {
-        // console.log("values", values);
-
-        let result = "";
-        if (Array.isArray(values)) {
-          // eslint-disable-next-line
-          values.map((item) => {
-            // console.log("zzz", item);
-            if (typeof item === "object" && item !== null) {
-              parseResult(item);
-            }
-          });
-        } else {
-          parseResult(values);
-        }
-
-        function parseResult(obj) {
-          for (let key in obj) {
-            let betterVisible =
-              isObjectArray(obj[key]) && obj[key].length > 0
-                ? obj[key].join(", ")
-                : obj[key];
-            result += `<li class="list-group-item country-value-item" >${key} - ${betterVisible} </li>`;
-          }
-        }
-
-        val = (
-          <ul
-            className="nested-list list-group"
-            dangerouslySetInnerHTML={{ __html: result }}
-          />
-        );
-
-        // simple way
-        // val = JSON.stringify(values);
-      } else {
-        let parseImg = values.toString().includes("http") ? (
-          <Image src={values} />
-        ) : (
-          <span className="similar-list-item">{values}</span>
-        );
-        val = parseImg;
-      }
-      return val;
-    };
-
     return Object.entries(data[0]).map(([key, values], i) => {
       return (
         <div className="country" key={`${key}-${i}`}>

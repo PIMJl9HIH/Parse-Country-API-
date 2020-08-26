@@ -12,17 +12,15 @@ import ChosenCountry from "./Components/ChosenCountry";
 import Breadcrumbs from "./Components/Breadcrumb";
 import Loading from "./Components/Loading";
 
+import ErrorBoundary from "./Containers/Error";
+
 function App() {
   const [data, setData] = useState([]);
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
-
   const [breadcumbs, setBreadcrumbs] = useState(["Mainpage"]);
-
   const [filteredResult, setFilteredResult] = useState([]);
-
   const [sorting, setSorting] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   async function handlerChooseRegion(e) {
@@ -36,7 +34,6 @@ function App() {
     } catch (error) {
       console.error(error);
     } finally {
-      console.log("finally");
       setLoading(false);
     }
   }
@@ -69,7 +66,6 @@ function App() {
     const country = e.target.innerText;
     const result = data.filter((item) => item.name === country);
     setCountry(country);
-
     setBreadcrumbs((breadcumbs) => [...breadcumbs, country]);
     setFilteredResult(result);
   }
@@ -77,11 +73,9 @@ function App() {
   function sortingCountry({ target: { name } }) {
     const orderSort = (a, b) => {
       if (sorting === name) {
-        console.log("the same ");
         setSorting("");
         return a[name] > b[name] ? 1 : -1;
       } else {
-        console.log("different");
         return a[name] > b[name] ? -1 : 1;
       }
     };
@@ -116,29 +110,31 @@ function App() {
   return (
     <ThemeContext.Provider value={contextScheme}>
       <div className="App">
-        <Container fluid>
-          <Row>
-            <Col>
-              <Breadcrumbs
-                breadcumbs={breadcumbs}
-                setBreadcrumbs={setBreadcrumbs}
-                updateBreadcrumbs={updateBreadcrumbs}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <h1 className="title">{titleText}</h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div className="result-block">
-                {loading ? <Loading /> : viewResults()}
-              </div>
-            </Col>
-          </Row>
-        </Container>
+        <ErrorBoundary>
+          <Container fluid>
+            <Row>
+              <Col>
+                <Breadcrumbs
+                  breadcumbs={breadcumbs}
+                  setBreadcrumbs={setBreadcrumbs}
+                  updateBreadcrumbs={updateBreadcrumbs}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h1 className="title">{titleText}</h1>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="result-block">
+                  {loading ? <Loading /> : viewResults()}
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </ErrorBoundary>
       </div>
     </ThemeContext.Provider>
   );
