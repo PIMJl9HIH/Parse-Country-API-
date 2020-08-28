@@ -5,6 +5,6 @@ const ROOT_URL = "https://restcountries.eu/rest/v2/";
 // data sources
 const REGION = `${ROOT_URL}region/`;
 
-export function GET_REGION(name) {
+export function GET_REGION(name: string) {
   return axios.get(`${REGION}${name}`);
 }

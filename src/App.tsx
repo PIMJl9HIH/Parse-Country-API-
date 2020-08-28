@@ -55,6 +55,7 @@ function App() {
             setRegion("");
             setCountry("");
             setFilteredResult([]);
+            setSorting("");
             setData([]);
             break;
           }
@@ -72,7 +73,7 @@ function App() {
     }
   }
 
-  function viewCountry(e: React.MouseEvent<HTMLUListElement>): void {
+  function viewCountry(e: React.MouseEvent<HTMLUListElement>) {
     const country = (e.target as HTMLElement).innerText;
     const result = data.filter((item) => item.name === country);
     setCountry(country);

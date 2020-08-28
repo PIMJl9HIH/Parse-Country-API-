@@ -1,20 +1,19 @@
 import React, { Component } from "react";
 
-class ErrorBoundary extends Component {
-  constructor(props) {
+class ErrorBoundary extends Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = { error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: any) {
     return { error: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: any, errorInfo: any) {
     this.setState({
       errorMsg: error,
     });
-    // You can also log error messages to an error reporting service here
   }
 
   render() {

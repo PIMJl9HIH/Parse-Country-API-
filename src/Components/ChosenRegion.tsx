@@ -4,7 +4,11 @@ import { ThemeContext } from "../helpers/Context";
 
 import Sorting from "./Sorting";
 
-export default function ChosenRegion({ data }) {
+type propsType = {
+  data: object[];
+};
+
+export default function ChosenRegion({ data }: propsType) {
   const { viewCountry } = useContext(ThemeContext);
   return (
     <>
