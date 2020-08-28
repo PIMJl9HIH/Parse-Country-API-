@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import classNames from "classnames";
 
 import { ListGroup, Image } from "react-bootstrap";
@@ -98,15 +98,13 @@ export default function ResultList({
   country,
   ...rest
 }: IResultList): React.ReactElement | null {
-  // if (!data || !data.length) return false;
-
   let chooseClick;
   if (handlerChooseRegion) chooseClick = handlerChooseRegion;
   if (viewCountry) chooseClick = viewCountry;
 
   const classes = classNames("text-left", { ...rest });
 
-  const countryInfo = () => {
+  const countryInfo = useCallback(() => {
     return Object.entries(data[0]).map(([key, values], i) => {
       return (
         <div className="country" key={`${key}-${i}`}>
@@ -115,7 +113,7 @@ export default function ResultList({
         </div>
       );
     });
-  };
+  }, [data]);
 
   const renderItem = data.map((item, i) => {
     const parseItem = rest && rest.startpage ? item : item.name;
