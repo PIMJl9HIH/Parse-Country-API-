@@ -3,22 +3,41 @@ import classNames from "classnames";
 
 import { ListGroup, Image } from "react-bootstrap";
 
-const checkToSimpleValue = (arr) =>
+import { SimpleTypes } from "../types";
+
+interface IMap {
+  item: SimpleTypes;
+  i?: number;
+}
+
+const checkToSimpleValue = (arr: any[]) =>
   arr.every((item) => typeof item !== "object");
 
-const isObjectArraySimple = (values) =>
+const isObjectArraySimple = (values: any) =>
   typeof values === "object" &&
   Array.isArray(values) &&
   checkToSimpleValue(values) &&
   values !== null;
 
-const parseVal = (values) => {
+function parseResult(obj: any, res: string) {
+  for (let key in obj) {
+    let betterVisible =
+      isObjectArraySimple(obj[key]) && obj[key].length > 0
+        ? obj[key].join(", ")
+        : obj[key];
+    res += `<li class="list-group-item country-value-item" >${key} - ${betterVisible} </li>`;
+  }
+
+  return res;
+}
+
+const parseVal = (values: any) => {
   if (!values) return "-";
   let val;
   if (isObjectArraySimple(values)) {
     val = (
       <ListGroup as="ul" horizontal>
-        {values.map((item, i) => (
+        {values.map((item: IMap, i: IMap) => (
           <ListGroup.Item
             as="li"
             key={`${item}-${i}`}
@@ -35,21 +54,11 @@ const parseVal = (values) => {
       // eslint-disable-next-line
       values.map((item) => {
         if (typeof item === "object" && item !== null) {
-          parseResult(item);
+          result = parseResult(item, result);
         }
       });
     } else {
-      parseResult(values);
-    }
-
-    function parseResult(obj) {
-      for (let key in obj) {
-        let betterVisible =
-          isObjectArraySimple(obj[key]) && obj[key].length > 0
-            ? obj[key].join(", ")
-            : obj[key];
-        result += `<li class="list-group-item country-value-item" >${key} - ${betterVisible} </li>`;
-      }
+      result = parseResult(values, result);
     }
 
     val = (
@@ -72,20 +81,28 @@ const parseVal = (values) => {
   return val;
 };
 
+interface IResultList {
+  data: any[];
+  handlerChooseRegion?: () => Promise<void>;
+  viewCountry?: () => void;
+  country?: string;
+  dataCountry?: boolean;
+  startpage?: boolean;
+  rest?: any[];
+}
+
 export default function ResultList({
   data,
   handlerChooseRegion,
   viewCountry,
   country,
   ...rest
-}) {
-  if (!data || !data.length) return false;
+}: IResultList): React.ReactElement | null {
+  // if (!data || !data.length) return false;
 
-  const chooseClick = handlerChooseRegion
-    ? handlerChooseRegion
-    : viewCountry
-    ? viewCountry
-    : null;
+  let chooseClick;
+  if (handlerChooseRegion) chooseClick = handlerChooseRegion;
+  if (viewCountry) chooseClick = viewCountry;
 
   const classes = classNames("text-left", { ...rest });
 

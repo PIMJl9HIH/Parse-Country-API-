@@ -14,17 +14,19 @@ import Loading from "./Components/Loading";
 
 import ErrorBoundary from "./Containers/Error";
 
-function App() {
-  const [data, setData] = useState([]);
-  const [region, setRegion] = useState("");
-  const [country, setCountry] = useState("");
-  const [breadcumbs, setBreadcrumbs] = useState(["Mainpage"]);
-  const [filteredResult, setFilteredResult] = useState([]);
-  const [sorting, setSorting] = useState("");
-  const [loading, setLoading] = useState(false);
+type stringType = string;
 
-  async function handlerChooseRegion(e) {
-    const region = e.target.innerText;
+function App() {
+  const [data, setData] = useState<any[]>([]);
+  const [region, setRegion] = useState<stringType>("");
+  const [country, setCountry] = useState<stringType>("");
+  const [breadcumbs, setBreadcrumbs] = useState(["Mainpage"]);
+  const [filteredResult, setFilteredResult] = useState<any[]>([]);
+  const [sorting, setSorting] = useState<stringType>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function handlerChooseRegion(e: React.MouseEvent<HTMLUListElement>) {
+    const region = (e.target as HTMLElement).innerText;
     setRegion(region);
     setLoading(true);
     try {
@@ -38,40 +40,54 @@ function App() {
     }
   }
 
-  function updateBreadcrumbs(e) {
-    const parentIndex = e.target.closest("li").getAttribute("data-index");
-    const sliced = breadcumbs.slice(0, parentIndex);
+  function updateBreadcrumbs(e: React.MouseEvent) {
+    const getLiElement = (e.target as Element).closest("li");
+    if (getLiElement !== null) {
+      const parentIndex: string | null = getLiElement.getAttribute(
+        "data-index"
+      );
 
-    switch (+parentIndex) {
-      case 1: {
-        setRegion("");
-        setCountry("");
-        setFilteredResult([]);
-        setData([]);
-        break;
+      if (parentIndex !== null) {
+        const sliced = breadcumbs.slice(0, +parentIndex);
+
+        switch (+parentIndex) {
+          case 1: {
+            setRegion("");
+            setCountry("");
+            setFilteredResult([]);
+            setData([]);
+            break;
+          }
+          case 2: {
+            setCountry("");
+            setFilteredResult([]);
+            break;
+          }
+          default:
+            return;
+        }
+
+        setBreadcrumbs(sliced);
       }
-      case 2: {
-        setCountry("");
-        setFilteredResult([]);
-        break;
-      }
-      default:
-        return;
     }
-
-    setBreadcrumbs(sliced);
   }
 
-  function viewCountry(e) {
-    const country = e.target.innerText;
+  function viewCountry(e: React.MouseEvent<HTMLUListElement>): void {
+    const country = (e.target as HTMLElement).innerText;
     const result = data.filter((item) => item.name === country);
     setCountry(country);
     setBreadcrumbs((breadcumbs) => [...breadcumbs, country]);
     setFilteredResult(result);
   }
 
-  function sortingCountry({ target: { name } }) {
-    const orderSort = (a, b) => {
+  type TCountry = {
+    target: {
+      name: string;
+    };
+  };
+
+  function sortingCountry({ target: { name } }: TCountry) {
+    const orderSort = (a: any, b: any) => {
       if (sorting === name) {
         setSorting("");
         return a[name] > b[name] ? 1 : -1;
@@ -80,7 +96,9 @@ function App() {
       }
     };
     setSorting(name);
-    const sortedData = [...data].sort((a, b) => orderSort(a, b));
+    const sortedData = [...data].sort((a: Object, b: Object) =>
+      orderSort(a, b)
+    );
     setData(sortedData);
   }
 
@@ -116,7 +134,6 @@ function App() {
               <Col>
                 <Breadcrumbs
                   breadcumbs={breadcumbs}
-                  setBreadcrumbs={setBreadcrumbs}
                   updateBreadcrumbs={updateBreadcrumbs}
                 />
               </Col>

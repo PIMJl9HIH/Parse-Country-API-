@@ -2,8 +2,16 @@ import React from "react";
 
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 
-export default function Breadcrumbs({ breadcumbs, updateBreadcrumbs }) {
-  const renderBreadcrumb = breadcumbs.map((item, index) => (
+type TypeBreadcrumbs = {
+  breadcumbs: string[];
+  updateBreadcrumbs: any;
+};
+
+export default function Breadcrumbs({
+  breadcumbs,
+  updateBreadcrumbs,
+}: TypeBreadcrumbs) {
+  const renderBreadcrumb = breadcumbs.map((item: string, index: number) => (
     <Breadcrumb.Item
       as="li"
       key={`item-${Math.random()}`}
